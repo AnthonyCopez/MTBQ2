@@ -2,7 +2,7 @@ library(haven)
 library(lavaan)
 library("misty")
 clean_data_BOT2 <- data.frame(read_dta("DATA"))
-bot2<-clean_data_BOT2
+DATA<-clean_data_BOT2
 ### model 12 item
 modelo10 <- "
 F1 =~ mtbq_item1+mtbq_item2+mtbq_item3+mtbq_item5+mtbq_item11+mtbq_item12    
@@ -32,31 +32,20 @@ fitmeasures(fit10, fit.measures=c("chisq.scaled", "df", "cfi.scaled", "tli.scale
 fitmeasures(fit11, fit.measures=c("chisq.scaled", "df", "cfi.scaled", "tli.scaled","mfi","wrmr","srmr",
                                   "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled","rmsea.robust", "cfi.robust","rmsea.ci.lower.robust","rmsea.ci.upper.robust","tli.robust"
 ))
-fit.config3 <- cfa(modelo10, data = bot2, group = "sex_observ",
+fit.config3 <- cfa(modelo10, data = DATA, group = "GROUP",
                    ordered = T, parameterization = "theta")
-
-fit.thresh3 <- measEq.syntax(configural.model = modelo10, data = bot2,
+fit.metric3 <- measEq.syntax(configural.model = modelo10, data = DATA,
                              ordered = T,
                              parameterization = "theta",
                              ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
-                             group = "sex_observ", group.equal = "thresholds",
-                             long.equal = "thresholds", return.fit = TRUE)
-
-fit.metric3 <- measEq.syntax(configural.model = modelo10, data = bot2,
+                             group = "GROUP", group.equal = "loadings",
+                             long.equal = "loadings",return.fit = TRUE)
+fit.scalar3 <- measEq.syntax(configural.model = modelo10, data = DATA,
                              ordered = T,
                              parameterization = "theta",
                              ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
-                             group = "sex_observ", group.equal = c("thresholds","loadings"),
-                             long.equal = c("thresholds","loadings"),return.fit = TRUE)
-
-fit.scalar3 <- measEq.syntax(configural.model = modelo10, data = bot2,
-                             ordered = T,
-                             parameterization = "theta",
-                             ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
-                             group = "sex_observ", group.equal = c("thresholds","loadings",
-                                                                  "intercepts"),
-                             long.equal = c("thresholds","loadings",
-                                            "intercepts"),return.fit = TRUE)
+                             group = "GROUP", group.equal = c("loadings","thresholds"),
+                             long.equal = c("loadings","thresholds"),return.fit = TRUE)
 measEqOut3<-compareFit(fit.config3,fit.thresh3,fit.metric3,fit.scalar3)
 summary(measEqOut3)
 #reliability
